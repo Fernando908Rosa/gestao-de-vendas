@@ -3,7 +3,9 @@ package com.gvendas.gestaovendas.servico;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.gvendas.gestaovendas.entidades.Categoria;
@@ -19,11 +21,25 @@ public class CategoriaServico {
 		return categoriaRepositorio.findAll();
 	}
 	
-	public Optional<Categoria> burcarPorId(Long codigo){
+	public Optional<Categoria> burcarPorCodigo(Long codigo){
 		return categoriaRepositorio.findById(codigo);
 	}
 	
 	public Categoria salvar(Categoria categoria) {
 		return categoriaRepositorio.save(categoria);
+	}
+	
+	public Categoria atualizar(Long codigo, Categoria categoria) {
+		Categoria categoriaSalvar = validarCategoriaExiste(codigo);
+		BeanUtils.copyProperties(categoria,categoriaSalvar, "codigo");
+		return categoriaRepositorio.save(categoriaSalvar);
+	}
+
+	private Categoria validarCategoriaExiste(Long codigo) {
+	   Optional<Categoria> categoria = burcarPorCodigo(codigo);
+	   if(categoria.isEmpty()) {
+		   throw new EmptyResultDataAccessException(1); 
+	   }
+	   return categoria.get();
 	}
 }
