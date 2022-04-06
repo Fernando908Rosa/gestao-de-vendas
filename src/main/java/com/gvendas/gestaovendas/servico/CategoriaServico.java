@@ -22,4 +22,8 @@ public class CategoriaServico {
 	public Optional<Categoria> burcarPorId(Long codigo){
 		return categoriaRepositorio.findById(codigo);
 	}
+	
+	public Categoria salvar(Categoria categoria) {
+		return categoriaRepositorio.save(categoria);
+	}
 }
