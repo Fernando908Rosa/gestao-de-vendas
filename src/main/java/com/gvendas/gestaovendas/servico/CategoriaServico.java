@@ -34,6 +34,10 @@ public class CategoriaServico {
 		BeanUtils.copyProperties(categoria,categoriaSalvar, "codigo");
 		return categoriaRepositorio.save(categoriaSalvar);
 	}
+	
+	public void deletar(Long codigo) {  
+		categoriaRepositorio.deleteById(codigo);
+	}
 
 	private Categoria validarCategoriaExiste(Long codigo) {
 	   Optional<Categoria> categoria = burcarPorCodigo(codigo);
