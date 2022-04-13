@@ -33,33 +33,33 @@ public class CategoriaControlador {
 	@Autowired
 	private CategoriaServico categoriaServico;
 	
-	@ApiOperation(value = "Listar")
+	@ApiOperation(value = "Listar", nickname = "listarTodas")
 	@GetMapping
 	public List<Categoria> listarTodas(){ 
 		return categoriaServico.listarTodas();
 	}
 	
-	@ApiOperation(value = "Listar por codigo")
+	@ApiOperation(value = "Listar por codigo", nickname = "buscarorId")
     @GetMapping("/{codigo}")
 	public ResponseEntity<Optional<Categoria>> buscarPorId(@PathVariable Long codigo){
     	Optional<Categoria> categoria = categoriaServico.burcarPorCodigo(codigo);
     	return categoria.isPresent() ? ResponseEntity.ok(categoria) : ResponseEntity.notFound().build();
 	}
 	
-    @ApiOperation(value = "Salvar")
+    @ApiOperation(value = "Salvar", nickname = "salvar")
     @PostMapping
     public ResponseEntity<Categoria> salvar(@Valid @RequestBody Categoria categoria){
         Categoria categoriaSalva = categoriaServico.salvar(categoria);
         return ResponseEntity.status(HttpStatus.CREATED).body(categoriaSalva); 
       }
     
-    @ApiOperation(value = "Atualizar")
+    @ApiOperation(value = "Atualizar", nickname = "atualizar")
     @PutMapping("/{codigo}")
     public ResponseEntity<Categoria> atualizar(@PathVariable long codigo, @Valid @RequestBody Categoria categoria){
     	return ResponseEntity.ok(categoriaServico.atualizar(codigo, categoria));
     }
     
-    @ApiOperation(value = "Deletar")
+    @ApiOperation(value = "Deletar", nickname = "delete")
     @DeleteMapping("/{codigo}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long codigo) {
