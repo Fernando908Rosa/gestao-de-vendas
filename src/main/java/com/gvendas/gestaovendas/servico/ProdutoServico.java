@@ -11,16 +11,20 @@ import com.gvendas.gestaovendas.repositorio.ProdutoRepositorio;
 
 @Service
 public class ProdutoServico {
-	
+
 	@Autowired
-	private ProdutoRepositorio produtorepositorio;
-	
+	private ProdutoRepositorio produtoRepositorio;
+
 	public List<Produto> listarTodos(Long codigocategoria) {
-		return produtorepositorio.findByCategoriaCodigo(codigocategoria);
-			
+		return produtoRepositorio.findByCategoriaCodigo(codigocategoria);
+
 	}
-	
+
 	public Optional<Produto> buscarPorCodigo(Long codigo, Long codigoCategoria) {
-		return produtorepositorio.buscarPorCodigo(codigo, codigoCategoria);
+		return produtoRepositorio.buscarPorCodigo(codigo, codigoCategoria);
+	}
+
+	public Produto salvar(Produto produto) {
+		return produtoRepositorio.save(produto);
 	}
 }
