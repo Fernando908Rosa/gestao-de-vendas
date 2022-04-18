@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class GestaoVendasTratamentoExcecao extends ResponseEntityExceptionHandler {
 
 	private static final String CONSTANT_VALIDATION_NOT_BLANK = "NOTBLANK";
+	private static final String CONSTANT_VALIDATION_NOT_NULL = "NOT_NULL";
 	private static final String CONSTANT_VALIDATION_NOT_LENGTH = "Length";
 
 	@Override
@@ -70,6 +71,10 @@ public class GestaoVendasTratamentoExcecao extends ResponseEntityExceptionHandle
 		if (fieldError.getCode().equals(CONSTANT_VALIDATION_NOT_BLANK)) {
 			return fieldError.getDefaultMessage().concat(" é obrigatório");
 		}
+		if (fieldError.getCode().equals(CONSTANT_VALIDATION_NOT_NULL)) {
+			return fieldError.getDefaultMessage().concat(" é obrigatório");
+			
+		}	
 		if (fieldError.getCode().equals(CONSTANT_VALIDATION_NOT_LENGTH)) {
 			return fieldError.getDefaultMessage().concat(String.format(" deve ter entre %s e %s caracteres.",
 					fieldError.getArguments()[2], fieldError.getArguments()[1]));
