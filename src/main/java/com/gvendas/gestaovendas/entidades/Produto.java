@@ -26,7 +26,7 @@ public class Produto {
 	private Long codigo;
 
 	@NotBlank(message = "nome")
-	@Column(name = "Descrição")
+	@Column(name = "descricao")
 	@Length(min = 3, max = 100, message = "Descrição" )
 	private String descricao;
 	
@@ -48,7 +48,7 @@ public class Produto {
 	
     @NotNull(message = "Codigo categoria")
 	@ManyToOne
-	@JoinColumn(name = "código_categoria", referencedColumnName = "codigo")
+	@JoinColumn(name = "codigo_categoria", referencedColumnName = "codigo", nullable=false, insertable=false, updatable=false)
 	private Categoria categoria;
 
 	public Long getCodigo() {
