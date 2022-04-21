@@ -2,6 +2,7 @@ package com.gvendas.gestaovendas.controlador;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gvendas.gestaovendas.dto.produto.ProdutoResponseDTO;
 import com.gvendas.gestaovendas.entidades.Produto;
 import com.gvendas.gestaovendas.servico.ProdutoServico;
 
@@ -32,18 +34,19 @@ public class ProdutoControlador {
 	@Autowired
 	private ProdutoServico produtoServico;
 
-	@ApiOperation(value = "Listar", nickname = "listarTodas")
+	@ApiOperation(value = "Listar", nickname = "listarTodos")
 	@GetMapping
-	public List<Produto> ListarTodas(@PathVariable Long codigoCategoria) {
-		return produtoServico.listarTodos(codigoCategoria);
+	public List<ProdutoResponseDTO> ListarTodas(@PathVariable Long codigoCategoria) {
+		return produtoServico.listarTodos(codigoCategoria).stream()
+			    .map(produto -> ProdutoResponseDTO.converterParaProdutoDTO(produto)).collect(Collectors.toList());
 	}
-
-	@ApiOperation(value = "Listar por codigo", nickname = "buscarPorCodigo")
+	
+	@ApiOperation(value = "Listar por código", nickname = "buscarPorCodigo")
 	@GetMapping("/{codigo}")
-	public ResponseEntity<Optional<Produto>> buscarPorId(@PathVariable Long codigoCategoria,
+	public ResponseEntity<ProdutoResponseDTO> buscarPorId(@PathVariable Long codigoCategoria,
 			@PathVariable Long codigo) {
 		Optional<Produto> produto = produtoServico.buscarPorCodigo(codigo, codigoCategoria);
-		return produto.isPresent() ? ResponseEntity.ok(produto) : ResponseEntity.notFound().build();
+		return produto.isPresent() ? ResponseEntity.ok(ProdutoResponseDTO.converterParaProdutoDTO(produto.get())) : ResponseEntity.notFound().build();
 	}
 
 	@ApiOperation(value = "Salvar", nickname = "salvarProduto")
@@ -52,19 +55,19 @@ public class ProdutoControlador {
 		Produto produtoSalvo = produtoServico.salvar(codigoCategoria, produto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(produtoSalvo);
 	}
-	
+
 	@ApiOperation(value = "Atualizar", nickname = "atualizarProduto")
 	@PutMapping("/{codigoProduto}")
-	public ResponseEntity<Produto> atualizar(@PathVariable Long codigoCategoria, @PathVariable Long codigoProduto, @Valid @RequestBody Produto produto) {
+	public ResponseEntity<Produto> atualizar(@PathVariable Long codigoCategoria, @PathVariable Long codigoProduto,
+			@Valid @RequestBody Produto produto) {
 		return ResponseEntity.ok(produtoServico.atualizar(codigoCategoria, codigoProduto, produto));
 	}
-	
+
 	@ApiOperation(value = "Deletar", nickname = "deletarProduto")
 	@DeleteMapping("/{codigoProduto}")
-	 @ResponseStatus(HttpStatus.NO_CONTENT)
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deletar(@PathVariable Long codigoCategoria, @PathVariable Long codigoProduto) {
 		produtoServico.deletar(codigoCategoria, codigoProduto);
-		
-	}
-}	
 
+	}
+}

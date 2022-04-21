@@ -1,4 +1,4 @@
-package com.gvendas.gestaovendas.dto;
+package com.gvendas.gestaovendas.dto.Categoria;
 
 import com.gvendas.gestaovendas.entidades.Categoria;
 
