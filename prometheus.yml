@@ -7,7 +7,7 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
 
-      - job_name: 'gestao-vendas'
+  - job_name: 'gestao-vendas'
     scrape_interval: 5s
     metrics_path: '/actuator/prometeus'
     static_configs:
