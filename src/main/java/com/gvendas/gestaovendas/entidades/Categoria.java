@@ -69,4 +69,6 @@ public class Categoria {
 		Categoria other = (Categoria) obj;
 		return Objects.equals(codigo, other.codigo) && Objects.equals(nome, other.nome);
 	}
+
+	
 }
