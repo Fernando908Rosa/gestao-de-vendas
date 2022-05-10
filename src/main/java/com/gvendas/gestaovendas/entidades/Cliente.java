@@ -22,7 +22,7 @@ public class Cliente {
 	@Column(name = "nome")
 	private String nome;
 
-	@Column(name = "teleone")
+	@Column(name = "telefone")
 	private String telefone;
 
 	@Column(name = "ativo")

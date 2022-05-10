@@ -1,32 +1,30 @@
-package com.gvendas.gestaovendas.entidades;
+package com.gvendas.gestaovendas.dto.cliente;
 
-import java.util.Objects;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
-@Embeddable
-public class Endereco {
-
-	@Column(name = "logradouro")
+@ApiModel("Endereço retorno DTO")
+public class EnderecoResponseDTO {
+	
+	@ApiModelProperty(value = "Logradouro")
 	private String logradouro;
-
-	@Column(name = "complemento")
+	
+	@ApiModelProperty(value = "Complemento")
 	private String complemento;
-
-	@Column(name = "bairro")
+	
+	@ApiModelProperty(value = "Bairro")
 	private String bairro;
-
-	@Column(name = "cep")
+	
+	@ApiModelProperty("Cep")                                   
 	private String cep;
-
-	@Column(name = "cidade")
+	
+	@ApiModelProperty("Cidade")
 	private String cidade;
-
-	@Column(name = "estado")
+	
+	@ApiModelProperty("Estado") 
 	private String estado;
 	
-	@Column(name = "Numero")
+	@ApiModelProperty("Numero")
 	private Integer numero;
 
 	public String getLogradouro() {
@@ -75,8 +73,9 @@ public class Endereco {
 
 	public void setEstado(String estado) {
 		this.estado = estado;
-
-	}
+		
+	}	
+	
 	
 
 	public Integer getNumero() {
@@ -87,22 +86,15 @@ public class Endereco {
 		this.numero = numero;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(bairro, cep, cidade, complemento, estado, logradouro);
-	}
+	public EnderecoResponseDTO(String logradouro, Integer numero, String complemento, String bairro, String cep, String cidade,
+			String estado) {
+		this.logradouro = logradouro;
+		this.complemento = complemento;
+		this.bairro = bairro;
+		this.cep = cep;
+		this.cidade = cidade;
+		this.estado = estado;
+		this.numero = numero;
+	} 
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (!(obj instanceof Endereco)) {
-			return false;
-		}
-		Endereco other = (Endereco) obj;
-		return Objects.equals(bairro, other.bairro) && Objects.equals(cep, other.cep)
-				&& Objects.equals(cidade, other.cidade) && Objects.equals(complemento, other.complemento)
-				&& Objects.equals(estado, other.estado) && Objects.equals(logradouro, other.logradouro);
-	}
 }
