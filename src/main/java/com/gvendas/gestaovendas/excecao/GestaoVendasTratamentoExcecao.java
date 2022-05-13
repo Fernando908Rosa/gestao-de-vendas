@@ -23,6 +23,7 @@ public class GestaoVendasTratamentoExcecao extends ResponseEntityExceptionHandle
 	private static final String CONSTANT_VALIDATION_NOT_BLANK = "NOTBLANK";
 	private static final String CONSTANT_VALIDATION_NOT_NULL = "NOT_NULL";
 	private static final String CONSTANT_VALIDATION_NOT_LENGTH = "Length";
+	private static final String CONSTANT_VALIDATION_PATTERN = "Pattern";
 
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
@@ -78,6 +79,9 @@ public class GestaoVendasTratamentoExcecao extends ResponseEntityExceptionHandle
 		if (fieldError.getCode().equals(CONSTANT_VALIDATION_NOT_LENGTH)) {
 			return fieldError.getDefaultMessage().concat(String.format(" deve ter entre %s e %s caracteres.",
 					fieldError.getArguments()[2], fieldError.getArguments()[1]));
+		}
+		if (fieldError.getCode().equals(CONSTANT_VALIDATION_PATTERN)) {
+			return fieldError.getDefaultMessage().concat(" formato inválido.");
 		}
 		return fieldError.toString();
 	}
