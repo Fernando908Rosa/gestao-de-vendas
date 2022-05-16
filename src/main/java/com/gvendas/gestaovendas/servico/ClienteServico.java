@@ -27,13 +27,13 @@ public class ClienteServico {
 	}
 
 	public Cliente salvar(Cliente cliente) {
-		validarClienteDulpicado(cliente);
+		validarClienteDuplicado(cliente);
 		return clienteRepositorio.save(cliente);
 	}
 	
 	public Cliente atualizar(Long codigo, Cliente cliente) {
 		Cliente clienteAtualizar = validarClienteExiste(codigo);
-		validarClienteDulpicado(cliente);
+		validarClienteDuplicado(cliente);
 		BeanUtils.copyProperties(cliente, clienteAtualizar, "codigo");
 		return clienteRepositorio.save(clienteAtualizar);
 	}
@@ -50,7 +50,7 @@ public class ClienteServico {
 		return cliente.get();
 	}
 	
-	private void validarClienteDulpicado(Cliente cliente) {
+	private void validarClienteDuplicado(Cliente cliente) {
 		Cliente clientePorNome = clienteRepositorio.findByNome(cliente.getNome());
 		if (clientePorNome != null && clientePorNome.getCodigo() != cliente.getCodigo()) {
 			throw new RegraNegocioException(

@@ -58,7 +58,7 @@ public class ClienteControlador {
 	}
 
 	@ApiOperation(value = "Atualizar", nickname = "atualizarCliente")
-	@PostMapping("/{codigo")
+	@PostMapping("/{codigo}")
 	public ResponseEntity<ClienteResponseDTO> atualizar(@PathVariable Long codigo,
 			@Valid @RequestBody ClienteRequestDTO clienteDto) {
 		Cliente clienteAtualizado = clienteServico.atualizar(codigo, clienteDto.converterParaEntidade(codigo));
