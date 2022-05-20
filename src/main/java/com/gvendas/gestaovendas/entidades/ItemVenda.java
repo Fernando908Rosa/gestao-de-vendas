@@ -26,6 +26,7 @@ public class ItemVenda {
 
 	@Column(name = "preco_vendido")
 	private BigDecimal precoVendido;
+	
 
 	@ManyToOne
 	@JoinColumn(name = "codigo_produto", referencedColumnName = "codigo")

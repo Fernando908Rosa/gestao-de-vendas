@@ -20,8 +20,13 @@ import com.gvendas.gestaovendas.repositorio.VendaRepositorio;
 @Service
 public class VendaServico {
 
+	@Autowired
 	private VendaRepositorio vendaRepositorio;
-	private ItemVendaRepositorio itemvendaRepositorio;
+	
+	@Autowired
+	private ItemVendaRepositorio itemVendaRepositorio;
+	
+	@Autowired
 	private ClienteServico clienteservico;
 
 	@Autowired
@@ -35,8 +40,9 @@ public class VendaServico {
 	public ClienteVendaResponseDTO ListaVendaPorCliente(Long codigoCliente) {
        Cliente cliente = validarClienteVendaExiste( codigoCliente);
        List<VendaResponseDTO>vendaResponseDtoList = vendaRepositorio.findByClienteCodigo(codigoCliente).stream()
-       .map(this::criandoVendaResonseDTO).collect(Collectors.toList());
+       .map(this::criandoVendaResponseDTO).collect(Collectors.toList());
 	return new ClienteVendaResponseDTO(cliente.getNome(), vendaResponseDtoList);
+	
     }
 
 	private Cliente validarClienteVendaExiste(Long codigoCliente) {
@@ -48,8 +54,8 @@ public class VendaServico {
 		return cliente.get();
 	}
 
-	private VendaResponseDTO criandoVendaResonseDTO(Venda venda) {
-		List<ItemVendaResponseDTO> itensVendaResponseDto = itemvendaRepositorio.findByVendaCodigo(venda.getCodigo())
+	private VendaResponseDTO criandoVendaResponseDTO(Venda venda) {
+		List<ItemVendaResponseDTO> itensVendaResponseDto = itemVendaRepositorio.findByVendaCodigo(venda.getCodigo())
 				.stream().map(this::criandoItensVendaResponseDto).collect(Collectors.toList());
 		return new VendaResponseDTO(venda.getCodigo(), venda.getData(), itensVendaResponseDto);
 	}
