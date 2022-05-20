@@ -17,14 +17,19 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/venda")
 public class VendaControlador {
-	
+
 	@Autowired
 	private VendaServico vendaServico;
-	
+
 	@ApiOperation(value = "Listar vendas por cliente", nickname = "ListarVendaPorCliente")
 	@GetMapping("/cliente/{codigoCliente}")
 	public ResponseEntity<ClienteVendaResponseDTO> ListarVendaPorCliente(@PathVariable Long codigoCliente) {
-		return ResponseEntity.ok(vendaServico.ListaVendaPorCliente(codigoCliente)); 
+		return ResponseEntity.ok(vendaServico.ListaVendaPorCliente(codigoCliente));
 	}
 
+	@ApiOperation(value = "Listar vendas por código", nickname = "ListarVendaPorCodigo")
+	@GetMapping("{codigoVenda}")
+	public ResponseEntity<ClienteVendaResponseDTO> ListarVendaPorCodigo(@PathVariable Long codigoVenda) {
+		return ResponseEntity.ok(vendaServico.ListarVendaPorCodigo(codigoVenda));
+	}
 }

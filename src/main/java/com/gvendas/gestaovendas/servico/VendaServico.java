@@ -1,5 +1,6 @@
 package com.gvendas.gestaovendas.servico;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,12 +23,14 @@ public class VendaServico {
 
 	@Autowired
 	private VendaRepositorio vendaRepositorio;
-	
+
 	@Autowired
 	private ItemVendaRepositorio itemVendaRepositorio;
-	
+
 	@Autowired
 	private ClienteServico clienteservico;
+
+	private Object codigo;
 
 	@Autowired
 	public VendaServico(VendaRepositorio vendaRepositorio, ClienteServico clienteservico,
@@ -38,12 +41,25 @@ public class VendaServico {
 	}
 
 	public ClienteVendaResponseDTO ListaVendaPorCliente(Long codigoCliente) {
-       Cliente cliente = validarClienteVendaExiste( codigoCliente);
-       List<VendaResponseDTO>vendaResponseDtoList = vendaRepositorio.findByClienteCodigo(codigoCliente).stream()
-       .map(this::criandoVendaResponseDTO).collect(Collectors.toList());
-	return new ClienteVendaResponseDTO(cliente.getNome(), vendaResponseDtoList);
-	
-    }
+		Cliente cliente = validarClienteVendaExiste(codigoCliente);
+		List<VendaResponseDTO> vendaResponseDtoList = vendaRepositorio.findByClienteCodigo(codigoCliente).stream()
+				.map(this::criandoVendaResponseDTO).collect(Collectors.toList());
+		return new ClienteVendaResponseDTO(cliente.getNome(), vendaResponseDtoList);
+
+	}
+
+	public ClienteVendaResponseDTO ListarVendaPorCodigo(Long codigovenda) {
+		Venda venda = validarVendaExiste(codigovenda);
+		return new ClienteVendaResponseDTO(venda.getCliente().getNome(), Arrays.asList(criandoVendaResponseDTO(venda)));
+	}
+
+	private Venda validarVendaExiste(Long codigoVenda) {
+		Optional<Venda> venda = vendaRepositorio.findById(codigoVenda);
+		if (venda.isEmpty()) {
+			throw new RegraNegocioException(String.format("Venda de código %s nao encontrado.", codigo));
+		}
+		return venda.get();
+	}
 
 	private Cliente validarClienteVendaExiste(Long codigoCliente) {
 		Optional<Cliente> cliente = clienteservico.burcarPorCodigo(codigoCliente);
@@ -61,7 +77,7 @@ public class VendaServico {
 	}
 
 	private ItemVendaResponseDTO criandoItensVendaResponseDto(ItemVenda itemVenda) {
-    	return new ItemVendaResponseDTO(itemVenda.getCodigo(), itemVenda.getQuantidade(),  itemVenda.getPrecoVendido(),
-    			 itemVenda.getProduto().getCodigo(), itemVenda.getProduto().getDescricao());
-    }
+		return new ItemVendaResponseDTO(itemVenda.getCodigo(), itemVenda.getQuantidade(), itemVenda.getPrecoVendido(),
+				itemVenda.getProduto().getCodigo(), itemVenda.getProduto().getDescricao());
+	}
 }
