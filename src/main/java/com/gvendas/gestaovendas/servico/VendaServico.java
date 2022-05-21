@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gvendas.gestaovendas.dto.Venda.ClienteVendaResponseDTO;
-import com.gvendas.gestaovendas.dto.Venda.ItemVendaResponseDTO;
 import com.gvendas.gestaovendas.dto.Venda.VendaResponseDTO;
 import com.gvendas.gestaovendas.entidades.Cliente;
 import com.gvendas.gestaovendas.entidades.ItemVenda;
@@ -19,7 +18,7 @@ import com.gvendas.gestaovendas.repositorio.ItemVendaRepositorio;
 import com.gvendas.gestaovendas.repositorio.VendaRepositorio;
 
 @Service
-public class VendaServico {
+public class VendaServico extends AbstractVendaServico {
 
 	@Autowired
 	private VendaRepositorio vendaRepositorio;
@@ -29,7 +28,6 @@ public class VendaServico {
 
 	@Autowired
 	private ClienteServico clienteservico;
-
 	private Object codigo;
 
 	@Autowired
@@ -43,14 +41,15 @@ public class VendaServico {
 	public ClienteVendaResponseDTO ListaVendaPorCliente(Long codigoCliente) {
 		Cliente cliente = validarClienteVendaExiste(codigoCliente);
 		List<VendaResponseDTO> vendaResponseDtoList = vendaRepositorio.findByClienteCodigo(codigoCliente).stream()
-				.map(this::criandoVendaResponseDTO).collect(Collectors.toList());
+				.map(venda -> criandoVendaResponseDTO(venda , itemVendaRepositorio.findByVendaCodigo(venda.getCodigo()))).collect(Collectors.toList());
 		return new ClienteVendaResponseDTO(cliente.getNome(), vendaResponseDtoList);
-
 	}
 
 	public ClienteVendaResponseDTO ListarVendaPorCodigo(Long codigovenda) {
 		Venda venda = validarVendaExiste(codigovenda);
-		return new ClienteVendaResponseDTO(venda.getCliente().getNome(), Arrays.asList(criandoVendaResponseDTO(venda)));
+		List<ItemVenda> itensVendaList = itemVendaRepositorio.findByVendaCodigo(venda.getCodigo());
+		return new ClienteVendaResponseDTO(venda.getCliente().getNome(), Arrays
+				.asList(criandoVendaResponseDTO(venda,itensVendaList))); 
 	}
 
 	private Venda validarVendaExiste(Long codigoVenda) {
@@ -68,16 +67,5 @@ public class VendaServico {
 					String.format("O Cliente  de codigo %s informado não existe no cadastro.", codigoCliente));
 		}
 		return cliente.get();
-	}
-
-	private VendaResponseDTO criandoVendaResponseDTO(Venda venda) {
-		List<ItemVendaResponseDTO> itensVendaResponseDto = itemVendaRepositorio.findByVendaCodigo(venda.getCodigo())
-				.stream().map(this::criandoItensVendaResponseDto).collect(Collectors.toList());
-		return new VendaResponseDTO(venda.getCodigo(), venda.getData(), itensVendaResponseDto);
-	}
-
-	private ItemVendaResponseDTO criandoItensVendaResponseDto(ItemVenda itemVenda) {
-		return new ItemVendaResponseDTO(itemVenda.getCodigo(), itemVenda.getQuantidade(), itemVenda.getPrecoVendido(),
-				itemVenda.getProduto().getCodigo(), itemVenda.getProduto().getDescricao());
 	}
 }
