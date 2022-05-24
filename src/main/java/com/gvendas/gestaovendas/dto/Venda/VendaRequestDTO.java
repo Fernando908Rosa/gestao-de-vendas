@@ -13,7 +13,7 @@ public class VendaRequestDTO {
 	private LocalDate data;
 
 	@ApiModelProperty(value = "Itens da venda")
-	private List<ItemVendaRequestDTO> itemVendaRequestDTO;
+	private List<ItemVendaRequestDTO> itensvendaDto;
 
 	public LocalDate getData() {
 		return data;
@@ -23,11 +23,11 @@ public class VendaRequestDTO {
 		this.data = data;
 	}
 
-	public List<ItemVendaRequestDTO> getItemVendaRequestDTO() {
-		return itemVendaRequestDTO;
+	public List<ItemVendaRequestDTO> getItensVendaDto() {
+		return itensvendaDto;
 	}
 
-	public void setItemVendaRequestDTO(List<ItemVendaRequestDTO> itemVendaRequestDTO) {
-		this.itemVendaRequestDTO = itemVendaRequestDTO;
-	}
+	public void setItensVendaDto(List<ItemVendaRequestDTO> itensVendaDto) {
+		this.itensvendaDto = itensVendaDto;
+	}	
 }
