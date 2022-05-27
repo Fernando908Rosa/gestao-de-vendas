@@ -13,6 +13,7 @@ import com.gvendas.gestaovendas.dto.Venda.VendaRequestDTO;
 import com.gvendas.gestaovendas.dto.Venda.VendaResponseDTO;
 import com.gvendas.gestaovendas.entidades.Cliente;
 import com.gvendas.gestaovendas.entidades.ItemVenda;
+import com.gvendas.gestaovendas.entidades.Produto;
 import com.gvendas.gestaovendas.entidades.Venda;
 import com.gvendas.gestaovendas.excecao.RegraNegocioException;
 import com.gvendas.gestaovendas.repositorio.ItemVendaRepositorio;
@@ -51,7 +52,7 @@ public class VendaServico extends AbstractVendaServico {
 
 	public ClienteVendaResponseDTO salvar(Long codigoCliente, VendaRequestDTO vendaDto) {
 		Cliente cliente = validarClienteVendaExiste(codigoCliente);
-		validarProdutoExiste(vendaDto.getItensVendaDto());
+		validarProdutoExisteEAtulizarQuantidade(vendaDto.getItensVendaDto());
 		Venda vendaSalva = salvarVenda(cliente, vendaDto);
 		return retornandoClienteVendaResponseDTO(vendaSalva,
 				itemVendaRepositorio.findByVendaPorCodigo(vendaSalva.getCodigo()));
@@ -64,9 +65,20 @@ public class VendaServico extends AbstractVendaServico {
 		return vendaSalva;
 	}
 
-	private void validarProdutoExiste(List<ItemVendaRequestDTO> itensVendaDto) {
-		itensVendaDto.forEach(item -> produtoServico.validarProdutoExiste(item.getCodigoProduto()));
+	private void validarProdutoExisteEAtulizarQuantidade(List<ItemVendaRequestDTO> itensVendaDto) {
+		itensVendaDto.forEach(item -> {
+			Produto produto = produtoServico.validarProdutoExiste(item.getCodigoProduto());
+			validarQuantidadeProdutoExiste(produto, item.getQuantidade());
+			produto.setQuantidade(produto.getQuantidade() - item.getQuantidade());
+			produtoServico.atualizarQuantidadeAposVenda(produto);
+		});
+	}
 
+	private void validarQuantidadeProdutoExiste(Produto produto, Integer quantidadeVendaDto) {
+		if (!(produto.getQuantidade() >= quantidadeVendaDto))
+			throw new RegraNegocioException(
+					String.format("A quantidade %s informada ara o produto %s não está disonivel em estoque",
+							quantidadeVendaDto, produto.getDescricao()));
 	}
 
 	private Venda validarVendaExiste(Long codigoVenda) {
