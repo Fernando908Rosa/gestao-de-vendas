@@ -4,8 +4,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gvendas.gestaovendas.dto.Venda.ClienteVendaResponseDTO;
 import com.gvendas.gestaovendas.dto.Venda.ItemVendaRequestDTO;
@@ -49,7 +52,8 @@ public class VendaServico extends AbstractVendaServico {
 		List<ItemVenda> itensVendaList = itemVendaRepositorio.findByVendaPorCodigo(venda.getCodigo());
 		return retornandoClienteVendaResponseDTO(venda, itensVendaList);
 	}
-
+	
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public ClienteVendaResponseDTO salvar(Long codigoCliente, VendaRequestDTO vendaDto) {
 		Cliente cliente = validarClienteVendaExiste(codigoCliente);
 		validarProdutoExisteEAtulizarQuantidade(vendaDto.getItensVendaDto());
