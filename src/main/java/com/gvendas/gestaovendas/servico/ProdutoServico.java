@@ -48,7 +48,7 @@ public class ProdutoServico {
 		produtoRepositorio.delete(produto);
 	}
 	
-	protected void atualizarQuantidadeAposVenda(Produto produto) {
+	protected void atualizarQuantidadeEmEstoqueVenda(Produto produto) {
 		produtoRepositorio.save(produto);
 	}
 	
