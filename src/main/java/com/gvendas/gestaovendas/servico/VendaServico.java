@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -52,8 +51,8 @@ public class VendaServico extends AbstractVendaServico {
 		List<ItemVenda> itensVendaList = itemVendaRepositorio.findByVendaPorCodigo(venda.getCodigo());
 		return retornandoClienteVendaResponseDTO(venda, itensVendaList);
 	}
-	
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public ClienteVendaResponseDTO salvar(Long codigoCliente, VendaRequestDTO vendaDto) {
 		Cliente cliente = validarClienteVendaExiste(codigoCliente);
 		validarProdutoExisteEAtulizarQuantidade(vendaDto.getItensVendaDto());
@@ -61,26 +60,46 @@ public class VendaServico extends AbstractVendaServico {
 		return retornandoClienteVendaResponseDTO(vendaSalva,
 				itemVendaRepositorio.findByVendaPorCodigo(vendaSalva.getCodigo()));
 	}
-    
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-    public void deletar(Long codigoVenda) {
-    	validarVendaExiste(codigoVenda);
-    	List<ItemVenda> itensVenda = itemVendaRepositorio.findByVendaPorCodigo(codigoVenda);
-    	validarProdutoExisteDevolverEstoque(itensVenda);
-    	itemVendaRepositorio.deleteAll(itensVenda);
-    	vendaRepositorio.deleteById(codigoVenda);
-    	
-    }
-    
-    private void validarProdutoExisteDevolverEstoque(List<ItemVenda>itensVenda) {
-        itensVenda.forEach(item -> {
-            Produto produto = produtoServico.validarProdutoExiste(item.getProduto().getCodigo());
-            produto.setQuantidade(produto.getQuantidade() + item.getQuantidade());
-            produtoServico.atualizarQuantidadeEmEstoqueVenda(produto);
-        });    
-   }
+
+	public ClienteVendaResponseDTO atualizar(Long codigoVenda, Long codigoCliente, VendaRequestDTO vendaDto) {
+		validarVendaExiste(codigoVenda);
+		Cliente cliente = validarClienteVendaExiste(codigoCliente);
+		List<ItemVenda> itensVendaList = itemVendaRepositorio.findByVendaPorCodigo(codigoVenda);
+		validarProdutoExisteDevolverEstoque(itensVendaList);
+		validarProdutoExisteEAtulizarQuantidade(vendaDto.getItensVendaDto());
+		itemVendaRepositorio.deleteAll(itensVendaList);
+		Venda vendaAtualizada = atualizarVenda(codigoVenda, cliente, vendaDto);
+		return retornandoClienteVendaResponseDTO(vendaAtualizada,
+				itemVendaRepositorio.findByVendaPorCodigo(vendaAtualizada.getCodigo()));
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void deletar(Long codigoVenda) {
+		validarVendaExiste(codigoVenda);
+		List<ItemVenda> itensVenda = itemVendaRepositorio.findByVendaPorCodigo(codigoVenda);
+		validarProdutoExisteDevolverEstoque(itensVenda);
+		itemVendaRepositorio.deleteAll(itensVenda);
+		vendaRepositorio.deleteById(codigoVenda);
+
+	}
+
+	private void validarProdutoExisteDevolverEstoque(List<ItemVenda> itensVenda) {
+		itensVenda.forEach(item -> {
+			Produto produto = produtoServico.validarProdutoExiste(item.getProduto().getCodigo());
+			produto.setQuantidade(produto.getQuantidade() + item.getQuantidade());
+			produtoServico.atualizarQuantidadeEmEstoqueVenda(produto);
+		});
+	}
+
 	private Venda salvarVenda(Cliente cliente, VendaRequestDTO vendaDto) {
 		Venda vendaSalva = vendaRepositorio.save(new Venda(vendaDto.getData(), cliente));
+		vendaDto.getItensVendaDto().stream().map(itemvendaDto -> criandoItemVenda(itemvendaDto, vendaSalva))
+				.forEach(itemVendaRepositorio::save);
+		return vendaSalva;
+	}
+
+	private Venda atualizarVenda(Long codigoVenda, Cliente cliente, VendaRequestDTO vendaDto) {
+		Venda vendaSalva = vendaRepositorio.save(new Venda(codigoVenda, vendaDto.getData(), cliente));
 		vendaDto.getItensVendaDto().stream().map(itemvendaDto -> criandoItemVenda(itemvendaDto, vendaSalva))
 				.forEach(itemVendaRepositorio::save);
 		return vendaSalva;

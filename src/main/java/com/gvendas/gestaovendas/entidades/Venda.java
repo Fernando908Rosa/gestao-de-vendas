@@ -27,11 +27,17 @@ public class Venda {
 	@ManyToOne
 	@JoinColumn(name = "codigo_cliente", referencedColumnName = "codigo")
 	private Cliente cliente;
-	
-	public Venda() {	
+
+	public Venda() {
 	}
 
 	public Venda(LocalDate data, Cliente cliente) {
+		this.data = data;
+		this.cliente = cliente;
+	}
+
+	public Venda(Long codigo, LocalDate data, Cliente cliente) {
+		this.codigo = codigo;
 		this.data = data;
 		this.cliente = cliente;
 	}
