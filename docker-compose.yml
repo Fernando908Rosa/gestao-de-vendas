@@ -1,5 +1,20 @@
 version: '3.8'
+
 services:
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gestao_venda_app
+    ports:
+      - 8080:8080
+    depends_on:
+      - msql
+      - jaeger
+      - prometheus
+      - grafana
+
   mysql:
     image: 'mysql:latest'
     container_name: mysql
