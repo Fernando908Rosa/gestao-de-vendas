@@ -7,7 +7,7 @@ CREATE TABLE produto (
 	observacao VARCHAR(500),
 	codigo_categoria BIGINT NOT NULL,
 	FOREIGN KEY (codigo_categoria) REFERENCES categoria(codigo)
-) 
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8mb4; 
 
 
 
